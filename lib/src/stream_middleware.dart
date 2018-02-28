@@ -46,11 +46,11 @@ class PayloadAction<P> {
 /// store.actions.chatsSubscription(new ActionPayload<Null>(action: StreamAction.unsubscribe));
 /// ```
 class MiddlewareStreamBuilder<State extends Built<State, StateBuilder>, StateBuilder extends Builder<State, StateBuilder>,
-Actions extends ReduxActions> {
+    Actions extends ReduxActions> {
   BuiltMap<String, StreamSubscription<dynamic>> _streams = new BuiltMap<String, StreamSubscription<dynamic>>();
 
   final Map<String, MiddlewareStreamHandler<State, StateBuilder, Actions, dynamic, dynamic>> _map =
-  <String, MiddlewareStreamHandler<State, StateBuilder, Actions, dynamic, dynamic>>{};
+      <String, MiddlewareStreamHandler<State, StateBuilder, Actions, dynamic, dynamic>>{};
 
   void add<Payload, StreamType>(ActionName<PayloadAction<Payload>> aMgr,
       MiddlewareStreamHandler<State, StateBuilder, Actions, Payload, StreamType> handler) {
@@ -69,49 +69,48 @@ Actions extends ReduxActions> {
   Middleware<State, StateBuilder, Actions> build() {
     return (MiddlewareApi<State, StateBuilder, Actions> api) {
       return (ActionHandler next) => (Action<dynamic> action) {
-        final dynamic subscriptionAction = action.payload;
-        final String actionName = action.name;
+            final dynamic subscriptionAction = action.payload;
+            final String actionName = action.name;
 
-        if (subscriptionAction is PayloadAction) {
-          if (subscriptionAction.action == StreamAction.unsubscribe) {
-            final StreamSubscription<dynamic> streamSubscription = _streams[actionName];
-            streamSubscription.cancel();
+            if (subscriptionAction is PayloadAction) {
+              if (subscriptionAction.action == StreamAction.unsubscribe) {
+                final StreamSubscription<dynamic> streamSubscription = _streams[actionName];
+                streamSubscription.cancel();
 
-            final MapBuilder<String, StreamSubscription<dynamic>> mapBuilder = _streams.toBuilder();
-            mapBuilder.remove(actionName);
-            _streams = (mapBuilder).build();
-          } else {
-            if (!_streams.containsKey(actionName)) {
-              final MiddlewareStreamHandler<State, StateBuilder, Actions, dynamic, dynamic> handler = _map[actionName];
+                final MapBuilder<String, StreamSubscription<dynamic>> mapBuilder = _streams.toBuilder();
+                mapBuilder.remove(actionName);
+                _streams = (mapBuilder).build();
+              } else {
+                final MiddlewareStreamHandler<State, StateBuilder, Actions, dynamic, dynamic> handler = _map[actionName];
+                if (!_streams.containsKey(actionName) && handler != null) {
+                  final MapBuilder<String, StreamSubscription<dynamic>> mapBuilder = _streams.toBuilder();
 
-              final MapBuilder<String, StreamSubscription<dynamic>> mapBuilder = _streams.toBuilder();
-
-              mapBuilder[actionName] = handler.getStream(subscriptionAction.payload).listen(
+                  mapBuilder[actionName] = handler.getStream(subscriptionAction.payload).listen(
                     (dynamic event) {
-                  handler.onData(api, next, action, event);
-                },
-                onError: (dynamic error, StackTrace stackTrace) {
-                  if (handler.cancelOnError) {
-                    final StreamSubscription<dynamic> streamSubscription = _streams[actionName];
-                    streamSubscription.cancel();
+                      handler.onData(api, next, action, event);
+                    },
+                    onError: (dynamic error, StackTrace stackTrace) {
+                      if (handler.cancelOnError) {
+                        final StreamSubscription<dynamic> streamSubscription = _streams[actionName];
+                        streamSubscription.cancel();
 
-                    final MapBuilder<String, StreamSubscription<dynamic>> mapBuilder = _streams.toBuilder();
-                    mapBuilder.remove(actionName);
-                    _streams = (mapBuilder).build();
-                  }
-                  handler.onError(error, stackTrace);
-                },
-                onDone: handler.onDone,
-                cancelOnError: handler.cancelOnError,
-              );
+                        final MapBuilder<String, StreamSubscription<dynamic>> mapBuilder = _streams.toBuilder();
+                        mapBuilder.remove(actionName);
+                        _streams = (mapBuilder).build();
+                      }
+                      handler.onError(error, stackTrace);
+                    },
+                    onDone: handler.onDone,
+                    cancelOnError: handler.cancelOnError,
+                  );
 
-              _streams = (mapBuilder).build();
+                  _streams = (mapBuilder).build();
+                }
+              }
+            } else {
+              next(action);
             }
-          }
-        } else {
-          next(action);
-        }
-      };
+          };
     };
   }
 }
@@ -141,7 +140,7 @@ Actions extends ReduxActions> {
 /// }
 /// ```
 abstract class MiddlewareStreamHandler<State extends Built<State, StateBuilder>,
-StateBuilder extends Builder<State, StateBuilder>, Actions extends ReduxActions, Payload, StreamType> {
+    StateBuilder extends Builder<State, StateBuilder>, Actions extends ReduxActions, Payload, StreamType> {
   /// The stream you want to listen for events.
   Stream<StreamType> getStream(Payload payload);
 
