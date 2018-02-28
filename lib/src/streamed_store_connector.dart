@@ -46,6 +46,9 @@ class _StreamedStoreConnectorState<StoreState, Actions extends ReduxActions, Loc
   /// cares about.
   LocalState _state;
 
+  /// The action that ties the stream
+  ActionDispatcher<PayloadAction<Payload>> _action;
+
   Store get _store {
     // get the store from the ReduxProvider ancestor
     final ReduxProvider reduxProvider = context.inheritFromWidgetOfExactType(ReduxProvider);
@@ -75,7 +78,8 @@ class _StreamedStoreConnectorState<StoreState, Actions extends ReduxActions, Loc
     // cannot be called before initState completes.
     // See https://github.com/flutter/flutter/blob/0.0.20/packages/flutter/lib/src/widgets/framework.dart#L3721
     if (_storeSub != null) return;
-    widget.streamAction(_store.actions)(PayloadAction.subscribe<dynamic>(widget.subscribePayload));
+    _action = widget.streamAction(_store.actions);
+    _action(PayloadAction.subscribe<dynamic>(widget.subscribePayload));
 
     // set the initial state
     _state = widget.connect(_store.state as StoreState);
@@ -92,8 +96,8 @@ class _StreamedStoreConnectorState<StoreState, Actions extends ReduxActions, Loc
   @override
   @mustCallSuper
   void dispose() {
+    _action(PayloadAction.unsubscribe);
     _storeSub.cancel();
-    widget.streamAction(_store.actions)(PayloadAction.unsubscribe);
     super.dispose();
   }
 
