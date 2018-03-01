@@ -35,6 +35,10 @@ class AutomaticStreamConnection extends StatelessWidget {
                       ),
                     ),
                   ),
+                  new Text(
+                    S.of(context).automatic_explanation,
+                    textAlign: TextAlign.center,
+                  )
                 ],
               );
             },

@@ -35,6 +35,11 @@ class S extends WidgetsLocalizations {
   String interval_milliseconds(String durationInMilliseconds) => "Interval: $durationInMilliseconds milliseconds";
 
   String get stop_the_stream => "Stop the stream first.";
+
+  String get automatic_explanation =>
+      "We start listening to the stream when the Widget in on page and we close the connection when the Widget is disposed.";
+
+  String get manually_explanation => "We are manually registering to the stream on button press.";
 }
 
 class en extends S {

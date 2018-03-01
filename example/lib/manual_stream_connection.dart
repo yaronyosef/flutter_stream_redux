@@ -61,6 +61,7 @@ class ManualStreamConnector extends StatelessWidget {
                           ),
                         ),
                       ),
+                      new Text(S.of(context).manually_explanation),
                     ],
                   );
                 },
