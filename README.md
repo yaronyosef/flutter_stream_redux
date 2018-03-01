@@ -42,7 +42,6 @@ by overriding the *cancelOnError* field, default is false.
     class TimeStreamHandler extends MiddlewareStreamHandler<AppState, AppStateBuilder, AppActions, Duration, int> {
       static final Log log = new Log('TimeStreamHandler');
     
-      /// We create the stream because we don't have a real one. you could use here a Firebase Database stream or any other stream. ;)
       @override
       Stream<int> getStream(Duration payload) {
         //initialize your stream here
@@ -126,3 +125,5 @@ There are two more overrides to make this work.
         return builder(context, now);
       }
     }
+    
+The logger package is https://pub.dartlang.org/packages/flutter_logger

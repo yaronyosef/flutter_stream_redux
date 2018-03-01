@@ -24,24 +24,21 @@ class S extends WidgetsLocalizations {
   @override
   TextDirection get textDirection => TextDirection.ltr;
 
-  String get manual_stream_connection => "Manual stream connection";
+  String get no_image => "Start typing";
 
-  String get start_stream => "Start stream";
+  String get search_on_life => "Search on life";
 
-  String get stop_stream => "Stop stream";
+  String get title_settings => "Settings";
 
-  String get automatic_stream_connection => "Automatic stream connection";
+  String get title_profile => "Profile";
 
-  String interval_milliseconds(String durationInMilliseconds) => "Interval: $durationInMilliseconds milliseconds";
+  String get title_users => "Profiles";
 
-  String get stop_the_stream => "Stop the stream first.";
+  String get quote_your_self => "Quote yourself";
 
-  String get automatic_explanation =>
-      "We start listening to the stream when the Widget in on page and we close the connection when the Widget is disposed.";
+  String get title_images => "Images";
 
-  String get manually_explanation => "We are manually registering to the stream on button press.";
-
-  String now_text(String now) => "Now: $now";
+  String get title_quotes => "Quotes";
 }
 
 class en extends S {
