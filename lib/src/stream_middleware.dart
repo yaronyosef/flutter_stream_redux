@@ -75,7 +75,7 @@ class MiddlewareStreamBuilder<State extends Built<State, StateBuilder>, StateBui
             if (subscriptionAction is PayloadAction) {
               if (subscriptionAction.action == StreamAction.unsubscribe) {
                 final StreamSubscription<dynamic> streamSubscription = _streams[actionName];
-                streamSubscription.cancel();
+                streamSubscription?.cancel();
 
                 final MapBuilder<String, StreamSubscription<dynamic>> mapBuilder = _streams.toBuilder();
                 mapBuilder.remove(actionName);
