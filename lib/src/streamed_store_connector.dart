@@ -15,7 +15,7 @@ abstract class StreamedStoreConnector<StoreState, Actions extends ReduxActions, 
   StreamedStoreConnector({Key key}) : super(key: key);
 
   /// [streamAction] give you all the actions available and it requires you to return the action that will trigger subscribe
-  /// and unsubscribe for the stream you want to listen to. The payload of the action bust be of type [StreamAction]
+  /// and unsubscribe for the stream you want to listen to. The payload of the action bust be of type [SubscriptionPayload]
   ActionDispatcher<SubscriptionPayload<Payload>> streamAction(Actions actions);
 
   /// Provide the payload you want to pass to the [MiddlewareStreamHandler.getStream]
