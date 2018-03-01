@@ -10,9 +10,7 @@ import 'package:meta/meta.dart';
 class NowStreamConnector extends StreamedStoreConnector<AppState, AppActions, int, Duration> {
   static final Log log = new Log('NowStreamConnector');
 
-  NowStreamConnector({@required this.builder, @required this.duration}) {
-    log.d('NowStreamConnector called: $duration');
-  }
+  NowStreamConnector({@required this.builder, @required this.duration});
 
   final ViewModelBuilder<int> builder;
 

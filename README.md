@@ -2,8 +2,7 @@
 
 Stream helper for build_redux and flutter_build_redux
 
-## Getting Started
-
+## Getting Started with StreamMiddleware
 ### Add action
 In you action file add the action that you want to trigger the stream subscription. The payload of this action should be 
 of type **SubscriptionPayload**. The type of SubscriptionPayload should be the type of payload you want to receive in the 
@@ -28,11 +27,17 @@ Note that only actions with the payload type of **SubscriptionPayload** are acce
     }
 
 #### Add you action handler class
-To handle the middleware action you need to create a class that extends **MiddlewareStreamHandler<AppState, AppStateBuilder, AppActions, Payload, StreamType>**.
-The Payload is the type of the **SubscriptionPayload** object you've added in the first step. In getStream you receive the payload
-you've passed when you called the triggering action. In the *getStream* method you need to return the stream you want to 
-listen to. *onData* is called each time a new value was emitted. You can also handle errors and stream close using the other callbacks. 
-You can also chose to cancel the stream on error by overriding the *cancelOnError* field, default is false.
+To handle the middleware action you need to create a class that extends **MiddlewareStreamHandler<AppState, AppStateBuilder,
+AppActions, *Payload*, *StreamType*>**.
+ 
+The **Payload** is the type of the **SubscriptionPayload\<*Payload*\>** object you've added in the first step.
+In *getStream* you receive the payload you've passed when you called the triggering action.
+
+The **StreamType** is the type of the object you stream produces, like **Stream<*StreamType*>**. 
+
+In the *getStream* method you need to return the stream you want to listen to. *onData* is called each time a new value was emitted. 
+You can also handle errors and stream close using the other callbacks. You can also chose to cancel the stream on error
+by overriding the *cancelOnError* field, default is false.
      
     class TimeStreamHandler extends MiddlewareStreamHandler<AppState, AppStateBuilder, AppActions, Duration, int> {
       static final Log log = new Log('TimeStreamHandler');
@@ -62,15 +67,7 @@ You can also chose to cancel the stream on error by overriding the *cancelOnErro
       @override
       bool get cancelOnError => false;
     }
-    
-#### Start listening to the stream.
-To start listening to the stream you can now call the action you've create. When you subscribe you must give the payload you want to receive in *getStream* 
-method in the **MiddlewareStreamHandler**
-    
-    actions.timeStream(SubscriptionPayload.subscribe(duration));
-    
-    actions.timeStream(SubscriptionPayload.unsubscribe);
-    
+
 ### Add the stream middleware to your store
 You just add you stream middleware to you middleware list of your Store.
     
@@ -83,3 +80,49 @@ You just add you stream middleware to you middleware list of your Store.
           getStreamMiddleware(),
         ],
       );
+          
+#### Start listening to the stream.
+To start listening to the stream you can now call the action you've create. When you subscribe you must give the payload 
+you want to receive in *getStream* method in the **MiddlewareStreamHandler**. In this way you can manually subscribe and
+unsubscribe from the stream.
+    
+    actions.timeStream(SubscriptionPayload.subscribe(duration));
+    
+    actions.timeStream(SubscriptionPayload.unsubscribe);
+
+## Getting Started with StreamedStoreConnector
+If you want to remain subscribed to the stream as long as the Widget is on screen then you can use the
+ **StreamedStoreConnector<StoreState, Actions, LocalState, Payload>**
+witch automatically manages the subscription for you. This is a thin wrapper around the **StoreConnector** from the 
+flutter_built_redux package.
+
+There are two more overrides to make this work. 
+
+**streamAction** is the action that triggers the subscription
+
+**subscribePayload** is the payload you would normally pass to the subscription action. **Payload** is the type of the 
+**SubscriptionPayload\<Payload\>**
+
+    class NowStreamConnector extends StreamedStoreConnector<AppState, AppActions, int, Duration> {
+      static final Log log = new Log('NowStreamConnector');
+    
+      NowStreamConnector({@required this.builder, @required this.duration});
+    
+      final ViewModelBuilder<int> builder;
+    
+      final Duration duration;
+    
+      @override
+      Duration get subscribePayload => duration;
+    
+      @override
+      ActionDispatcher<SubscriptionPayload<Duration>> streamAction(AppActions actions) => actions.timeStream;
+    
+      @override
+      int connect(AppState state) => state.now;
+    
+      @override
+      Widget build(BuildContext context, int now, AppActions actions) {
+        return builder(context, now);
+      }
+    }
