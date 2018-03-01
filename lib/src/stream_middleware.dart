@@ -98,9 +98,9 @@ class MiddlewareStreamBuilder<State extends Built<State, StateBuilder>, StateBui
                         mapBuilder.remove(actionName);
                         _streams = (mapBuilder).build();
                       }
-                      handler.onError(error, stackTrace);
+                      handler.onError(api, error, stackTrace);
                     },
-                    onDone: handler.onDone,
+                    onDone: () => handler.onDone(api),
                     cancelOnError: handler.cancelOnError,
                   );
 
@@ -148,11 +148,11 @@ abstract class MiddlewareStreamHandler<State extends Built<State, StateBuilder>,
   bool cancelOnError = false;
 
   /// This will be trigger every time the stream has new data.
-  void onData(MiddlewareApi<State, StateBuilder, Actions> api, ActionHandler next, Action action, StreamType event);
+  void onData(MiddlewareApi<State, StateBuilder, Actions> api, ActionHandler next, Action<PayloadAction<Payload>> action, StreamType event);
 
   /// see [Stream.listen], this callback is optional
-  void onDone() {}
+  void onDone(MiddlewareApi<State, StateBuilder, Actions> api) {}
 
   /// see [Stream.listen], this callback is optional
-  void onError(dynamic error, StackTrace stackTrace) {}
+  void onError(MiddlewareApi<State, StateBuilder, Actions> api, dynamic error, StackTrace stackTrace) {}
 }
