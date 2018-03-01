@@ -10,7 +10,7 @@ abstract class AppActions extends ReduxActions {
 
   AppActions._();
 
-  ActionDispatcher<PayloadAction<Duration>> get timeStream;
+  ActionDispatcher<SubscriptionPayload<Duration>> get timeStream;
 
   ActionDispatcher<Duration> get setDuration;
 

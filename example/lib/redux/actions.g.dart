@@ -10,8 +10,8 @@ class _$AppActions extends AppActions {
   factory _$AppActions() => new _$AppActions._();
   _$AppActions._() : super._();
 
-  final ActionDispatcher<PayloadAction<Duration>> timeStream =
-      new ActionDispatcher<PayloadAction<Duration>>('AppActions-timeStream');
+  final ActionDispatcher<SubscriptionPayload<Duration>> timeStream =
+      new ActionDispatcher<SubscriptionPayload<Duration>>('AppActions-timeStream');
   final ActionDispatcher<Duration> setDuration =
       new ActionDispatcher<Duration>('AppActions-setDuration');
   final ActionDispatcher<int> setNow =
@@ -29,8 +29,8 @@ class _$AppActions extends AppActions {
 }
 
 class AppActionsNames {
-  static final ActionName<PayloadAction<Duration>> timeStream =
-      new ActionName<PayloadAction<Duration>>('AppActions-timeStream');
+  static final ActionName<SubscriptionPayload<Duration>> timeStream =
+      new ActionName<SubscriptionPayload<Duration>>('AppActions-timeStream');
   static final ActionName<Duration> setDuration =
       new ActionName<Duration>('AppActions-setDuration');
   static final ActionName<int> setNow =

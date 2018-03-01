@@ -18,9 +18,11 @@ Middleware<AppState, AppStateBuilder, AppActions> getStreamMiddleware() {
 class TimeStreamHandler extends MiddlewareStreamHandler<AppState, AppStateBuilder, AppActions, Duration, int> {
   static final Log log = new Log('TimeStreamHandler');
 
+  /// We create the stream because we don't have a real one. you could use here a Firebase Database stream or any other stream. ;)
+
   @override
   Stream<int> getStream(Duration payload) {
-    /// This is closed when we call this handler action with [PayloadAction.unsubscribe]
+    /// This is closed when we call this handler action with [SubscriptionPayload.unsubscribe]
     // ignore: close_sinks
     StreamController<int> controller;
     Timer timer;
@@ -48,7 +50,7 @@ class TimeStreamHandler extends MiddlewareStreamHandler<AppState, AppStateBuilde
 
   @override
   void onData(MiddlewareApi<AppState, AppStateBuilder, AppActions> api, ActionHandler next,
-      Action<PayloadAction<Duration>> action, int event) {
+      Action<SubscriptionPayload<Duration>> action, int event) {
     api.actions.setNow(event);
   }
 
@@ -56,4 +58,12 @@ class TimeStreamHandler extends MiddlewareStreamHandler<AppState, AppStateBuilde
   void onError(MiddlewareApi<AppState, AppStateBuilder, AppActions> api, dynamic error, StackTrace stackTrace) {
     log.d(error);
   }
+
+  @override
+  void onDone(MiddlewareApi<AppState, AppStateBuilder, AppActions> api) {
+    log.d('done');
+  }
+
+  @override
+  bool get cancelOnError => false;
 }

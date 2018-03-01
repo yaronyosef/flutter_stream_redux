@@ -7,12 +7,12 @@ import 'package:meta/meta.dart';
 
 enum StreamAction { subscribe, unsubscribe }
 
-class PayloadAction<P> {
-  const PayloadAction({@required this.action, this.payload}) : assert(action != null);
+class SubscriptionPayload<P> {
+  const SubscriptionPayload({@required this.action, this.payload}) : assert(action != null);
 
-  static PayloadAction unsubscribe = const PayloadAction<Null>(action: StreamAction.unsubscribe);
+  static SubscriptionPayload unsubscribe = const SubscriptionPayload<Null>(action: StreamAction.unsubscribe);
 
-  static PayloadAction subscribe<P>(P payload) => new PayloadAction<P>(action: StreamAction.subscribe, payload: payload);
+  static SubscriptionPayload subscribe<P>(P payload) => new SubscriptionPayload<P>(action: StreamAction.subscribe, payload: payload);
 
   final StreamAction action;
 
@@ -52,7 +52,7 @@ class MiddlewareStreamBuilder<State extends Built<State, StateBuilder>, StateBui
   final Map<String, MiddlewareStreamHandler<State, StateBuilder, Actions, dynamic, dynamic>> _map =
       <String, MiddlewareStreamHandler<State, StateBuilder, Actions, dynamic, dynamic>>{};
 
-  void add<Payload, StreamType>(ActionName<PayloadAction<Payload>> aMgr,
+  void add<Payload, StreamType>(ActionName<SubscriptionPayload<Payload>> aMgr,
       MiddlewareStreamHandler<State, StateBuilder, Actions, Payload, StreamType> handler) {
     if (!_map.containsKey(aMgr.name)) {
       _map[aMgr.name] = handler;
@@ -72,7 +72,7 @@ class MiddlewareStreamBuilder<State extends Built<State, StateBuilder>, StateBui
             final dynamic subscriptionAction = action.payload;
             final String actionName = action.name;
 
-            if (subscriptionAction is PayloadAction) {
+            if (subscriptionAction is SubscriptionPayload) {
               if (subscriptionAction.action == StreamAction.unsubscribe) {
                 final StreamSubscription<dynamic> streamSubscription = _streams[actionName];
                 streamSubscription?.cancel();
@@ -148,7 +148,7 @@ abstract class MiddlewareStreamHandler<State extends Built<State, StateBuilder>,
   bool cancelOnError = false;
 
   /// This will be trigger every time the stream has new data.
-  void onData(MiddlewareApi<State, StateBuilder, Actions> api, ActionHandler next, Action<PayloadAction<Payload>> action, StreamType event);
+  void onData(MiddlewareApi<State, StateBuilder, Actions> api, ActionHandler next, Action<SubscriptionPayload<Payload>> action, StreamType event);
 
   /// see [Stream.listen], this callback is optional
   void onDone(MiddlewareApi<State, StateBuilder, Actions> api) {}

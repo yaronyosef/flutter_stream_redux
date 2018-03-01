@@ -26,12 +26,12 @@ abstract class NowViewModel implements Built<NowViewModel, NowViewModelBuilder> 
         ..listenToStream = (Duration duration) {
           log.d(duration);
           if (duration == null) {
-            actions.timeStream(PayloadAction.unsubscribe);
+            actions.timeStream(SubscriptionPayload.unsubscribe);
             actions.setNow(0);
             actions.setIsStarted(false);
           } else {
             actions.setIsStarted(true);
-            actions.timeStream(PayloadAction.subscribe(duration));
+            actions.timeStream(SubscriptionPayload.subscribe(duration));
           }
         };
     });

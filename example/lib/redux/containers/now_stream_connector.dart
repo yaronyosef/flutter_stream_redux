@@ -22,7 +22,7 @@ class NowStreamConnector extends StreamedStoreConnector<AppState, AppActions, in
   Duration get subscribePayload => duration;
 
   @override
-  ActionDispatcher<PayloadAction<Duration>> streamAction(AppActions actions) => actions.timeStream;
+  ActionDispatcher<SubscriptionPayload<Duration>> streamAction(AppActions actions) => actions.timeStream;
 
   @override
   int connect(AppState state) => state.now;

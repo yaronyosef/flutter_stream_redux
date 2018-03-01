@@ -16,7 +16,7 @@ abstract class StreamedStoreConnector<StoreState, Actions extends ReduxActions, 
 
   /// [streamAction] give you all the actions available and it requires you to return the action that will trigger subscribe
   /// and unsubscribe for the stream you want to listen to. The payload of the action bust be of type [StreamAction]
-  ActionDispatcher<PayloadAction<Payload>> streamAction(Actions actions);
+  ActionDispatcher<SubscriptionPayload<Payload>> streamAction(Actions actions);
 
   /// Provide the payload you want to pass to the [MiddlewareStreamHandler.getStream]
   Payload get subscribePayload;
@@ -47,7 +47,7 @@ class _StreamedStoreConnectorState<StoreState, Actions extends ReduxActions, Loc
   LocalState _state;
 
   /// The action that ties the stream
-  ActionDispatcher<PayloadAction<Payload>> _action;
+  ActionDispatcher<SubscriptionPayload<Payload>> _action;
 
   Store get _store {
     // get the store from the ReduxProvider ancestor
@@ -68,12 +68,12 @@ class _StreamedStoreConnectorState<StoreState, Actions extends ReduxActions, Loc
   @override
   void didUpdateWidget(StreamedStoreConnector<StoreState, Actions, LocalState, Payload> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    final ActionDispatcher<PayloadAction<Payload>> oldAction = oldWidget.streamAction(_store.actions);
-    final ActionDispatcher<PayloadAction<Payload>> newAction = widget.streamAction(_store.actions);
+    final ActionDispatcher<SubscriptionPayload<Payload>> oldAction = oldWidget.streamAction(_store.actions);
+    final ActionDispatcher<SubscriptionPayload<Payload>> newAction = widget.streamAction(_store.actions);
 
     if (oldAction != newAction || oldWidget.subscribePayload != widget.subscribePayload) {
-      oldAction(PayloadAction.unsubscribe);
-      newAction(PayloadAction.subscribe(widget.subscribePayload));
+      oldAction(SubscriptionPayload.unsubscribe);
+      newAction(SubscriptionPayload.subscribe(widget.subscribePayload));
     }
   }
 
@@ -91,7 +91,7 @@ class _StreamedStoreConnectorState<StoreState, Actions extends ReduxActions, Loc
     // See https://github.com/flutter/flutter/blob/0.0.20/packages/flutter/lib/src/widgets/framework.dart#L3721
     if (_storeSub != null) return;
     _action = widget.streamAction(_store.actions);
-    _action(PayloadAction.subscribe(widget.subscribePayload));
+    _action(SubscriptionPayload.subscribe(widget.subscribePayload));
 
     // set the initial state
     _state = widget.connect(_store.state as StoreState);
@@ -108,7 +108,7 @@ class _StreamedStoreConnectorState<StoreState, Actions extends ReduxActions, Loc
   @override
   @mustCallSuper
   void dispose() {
-    _action(PayloadAction.unsubscribe);
+    _action(SubscriptionPayload.unsubscribe);
     _storeSub.cancel();
     super.dispose();
   }
