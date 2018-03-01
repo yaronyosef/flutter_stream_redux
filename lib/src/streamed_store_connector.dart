@@ -65,6 +65,18 @@ class _StreamedStoreConnectorState<StoreState, Actions extends ReduxActions, Loc
     return reduxProvider.store;
   }
 
+  @override
+  void didUpdateWidget(StreamedStoreConnector<StoreState, Actions, LocalState, Payload> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final ActionDispatcher<PayloadAction<Payload>> oldAction = oldWidget.streamAction(_store.actions);
+    final ActionDispatcher<PayloadAction<Payload>> newAction = widget.streamAction(_store.actions);
+
+    if (oldAction != newAction || oldWidget.subscribePayload != widget.subscribePayload) {
+      oldAction(PayloadAction.unsubscribe);
+      newAction(PayloadAction.subscribe(widget.subscribePayload));
+    }
+  }
+
   /// sets up a subscription to the store and the stream
   @override
   @mustCallSuper
@@ -79,7 +91,7 @@ class _StreamedStoreConnectorState<StoreState, Actions extends ReduxActions, Loc
     // See https://github.com/flutter/flutter/blob/0.0.20/packages/flutter/lib/src/widgets/framework.dart#L3721
     if (_storeSub != null) return;
     _action = widget.streamAction(_store.actions);
-    _action(PayloadAction.subscribe<dynamic>(widget.subscribePayload));
+    _action(PayloadAction.subscribe(widget.subscribePayload));
 
     // set the initial state
     _state = widget.connect(_store.state as StoreState);
