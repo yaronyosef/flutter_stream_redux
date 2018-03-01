@@ -34,7 +34,7 @@ class _MyAppState extends State<MyApp> {
     return new ReduxProvider(
       store: widget.store,
       child: new MaterialApp(
-        title: 'Flutter Demo',
+        title: 'Stream Redux Demo',
         theme: new ThemeData(
           primarySwatch: Colors.blue,
         ),

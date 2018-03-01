@@ -29,7 +29,7 @@ class AutomaticStreamConnection extends StatelessWidget {
                   new Container(
                     margin: const EdgeInsets.all(32.0),
                     child: new Text(
-                      'Now: $now',
+                      S.of(context).now_text(now.toString()),
                       style: const TextStyle(
                         fontSize: 32.0,
                       ),

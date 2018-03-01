@@ -40,6 +40,8 @@ class S extends WidgetsLocalizations {
       "We start listening to the stream when the Widget in on page and we close the connection when the Widget is disposed.";
 
   String get manually_explanation => "We are manually registering to the stream on button press.";
+
+  String now_text(String now) => "Now: $now";
 }
 
 class en extends S {
